@@ -16,18 +16,32 @@ jobs:
 
       - name: Extract uploaded project ZIP and replace project files
         shell: bash
+        
         run: |
           ZIP_FILE="tower-defense-3d-graphics-update.zip"
-          test -f "$ZIP_FILE" || { echo "ZIP file not found: $ZIP_FILE"; exit 1; }
+
+          if [ ! -f "$ZIP_FILE" ]; then
+            echo "ZIP already extracted. Skipping extraction."
+            exit 0
+          fi
+
           mkdir -p /tmp/graphics-update
           unzip -q "$ZIP_FILE" -d /tmp/graphics-update
+
           PROJECT_DIR="/tmp/graphics-update/tower-defense - Copy"
-          test -f "$PROJECT_DIR/package.json" || { echo "Project folder or package.json not found in ZIP"; exit 1; }
+
+          test -f "$PROJECT_DIR/package.json" || {
+            echo "Project folder or package.json not found"
+            exit 1
+          }
+
           rsync -a --delete \
             --exclude='.git' \
             --exclude='.github/' \
             "$PROJECT_DIR/" "$GITHUB_WORKSPACE/"
+
           rm -f "$ZIP_FILE"
+
 
       - name: Commit extracted project files
         run: |
