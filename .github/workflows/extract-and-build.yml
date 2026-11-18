@@ -52,7 +52,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-                - name: Configure Android SDK
+      - name: Configure Android SDK
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
           test -d "$ANDROID_HOME" || exit 1
